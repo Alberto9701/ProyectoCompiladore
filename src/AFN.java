@@ -1,6 +1,7 @@
 import java.util.HashSet;
 import java.util.Stack;
 // hola xd
+//este es un comentario mio
 public class AFN {
     public static HashSet<AFN> ConjDeAFNs = new HashSet<AFN>();
     Estado EdoIni;
