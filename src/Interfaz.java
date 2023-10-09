@@ -1,6 +1,8 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Interfaz extends JFrame implements ActionListener {
@@ -78,6 +80,7 @@ public class Interfaz extends JFrame implements ActionListener {
                 afn.CrearAFNBasico(simb1, simb2);
                 afn.IdAFN = cont++;
                 AFN.ConjDeAFNs.add(afn);
+                System.out.println("INDICES DE AFNS");
                 System.out.println(afn.IdAFN);
                 JOptionPane.showMessageDialog(null, "Creaste AFN");
                 panel.removeAll();
@@ -124,7 +127,15 @@ public class Interfaz extends JFrame implements ActionListener {
             JButton boton = new JButton("Unir AFNs");
             boton.addActionListener(e1 -> {
                 AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                System.out.println("Estados del primer afn a unir");
+                for (Estado est: afnSelec1.EdosAFN) {
+                    System.out.println(est.getIdEstado());
+                }
                 AFN afnSelec2 =(AFN) entrada2.getSelectedItem();
+                System.out.println("Estados del segundo afn a unir");
+                for (Estado est: afnSelec2.EdosAFN) {
+                    System.out.println(est.getIdEstado());
+                }
                 afnSelec1.UnirAFN(afnSelec2);
                 AFN.ConjDeAFNs.remove(afnSelec2);
 
@@ -199,28 +210,53 @@ public class Interfaz extends JFrame implements ActionListener {
         }
         if (e.getSource() == item6) {
             panel.removeAll();
+            panel.revalidate();
+            panel.repaint();
             panel.setLayout(new GridBagLayout());
             JComboBox<AFN> entrada = new JComboBox<>();
             for (AFN elemento: AFN.ConjDeAFNs) {
                 entrada.addItem(elemento);
             }
-            AFN afnSelec1 =(AFN) entrada.getSelectedItem();
 
             constraints.gridx = 1;
             constraints.gridy = 0;
             panel.add(new JScrollPane(entrada), constraints);
 
             JButton boton = new JButton("ver resultados");
+
+            // Nombres de las columnas
+            String[] columnas = {"Estado", "Símbolo"};
+            // Crear el modelo de la tabla
+            DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+            // Crear la tabla
+            JTable tabla = new JTable(modelo);
+
             boton.addActionListener(e1 -> {
-                Estado estado1;
-                for (int i = 0; i <afnSelec1.EdosAFN.size(); i++) {
-                    estado1 = afnSelec1.EdosAFN.iterator().next();
-                    for (int j = 0; j < estado1.getTrans().size(); j++) {
-                        System.out.println("Estado: " + estado1 + " Trancision: " + estado1.getTrans().iterator().next());
+                modelo.setRowCount(0); // Borra los datos de la tabla
+                AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                for (Estado est: afnSelec1.EdosAFN) {
+                    if (est.getTrans().isEmpty()) {
+                        Object[] fila = {est.getIdEstado(), "Ninguna"};
+                        modelo.addRow(fila);
+                    } else {
+                        for (Transicion t: est.getTrans()) {
+                            if (t.getSimbInf() != t.getSimbSup()) {
+                                for (char i = t.getSimbInf(); i <= t.getSimbSup(); i++) {
+                                    System.out.println(i);
+                                    Object[] fila = {est.getIdEstado(), i};
+                                    modelo.addRow(fila);
+                                }
+                            } else {
+                                Object[] fila = {est.getIdEstado(), t.getSimbSup()};
+                                modelo.addRow(fila);
+                            }
+                        }
                     }
+
                 }
-                JOptionPane.showMessageDialog(null, "El resultado se muestra en consola");
-                panel.removeAll();
+                constraints.gridx = 1;
+                constraints.gridy = 6;
+                panel.add(new JScrollPane(tabla), constraints);
                 // Actualizar el panel
                 panel.revalidate();
                 panel.repaint();
@@ -229,7 +265,6 @@ public class Interfaz extends JFrame implements ActionListener {
             constraints.gridy = 4;
             panel.add(boton, constraints);
             this.add(panel);
-
             // Actualizar el panel
             panel.revalidate();
             panel.repaint();

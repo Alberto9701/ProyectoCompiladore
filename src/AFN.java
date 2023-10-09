@@ -1,6 +1,8 @@
 import java.util.HashSet;
 import java.util.Stack;
-// hola xd
+// hola x
+//
+// d
 public class AFN {
     public static HashSet<AFN> ConjDeAFNs = new HashSet<AFN>();
     Estado EdoIni;
@@ -14,7 +16,6 @@ public class AFN {
     public String toString() {
         return Integer.toString(IdAFN);
     }
-
     public AFN() {
         IdAFN = 0;
         EdoIni = null;
