@@ -347,18 +347,23 @@ public class Interfaz extends JFrame implements ActionListener {
         if (e.getSource() == item7) {
             panel.removeAll();
             panel.setLayout(new FlowLayout());
+            JLabel indice = new JLabel("Indice a elegir: ");
+            panel.add(indice);
 
-            JButton boton = new JButton("Crear AFN");
+            JTextField entrada = new JTextField();
+            entrada.setPreferredSize(new Dimension(100,20));
+            panel.add(entrada);
+
+
+
+            JButton boton = new JButton("Cargar AFD");
             boton.addActionListener(e12 -> {
+
+                String indice1 = entrada.getText();
+                int ind = Integer.parseInt(indice1);
                 AFD afd = new AFD();
                 try {
-                    afd.LeerAFDdeArchivo("archivo.txt", 5);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                // Crear un modelo de tabla vacío
-                try {
-                    afd = AFD.LeerAFDdeArchivo("archivo.txt", 5);
+                    afd.LeerAFDdeArchivo("archivo.txt", ind);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }

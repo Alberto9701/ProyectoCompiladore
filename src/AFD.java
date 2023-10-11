@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.io.*;
+import java.util.List;
 
 class TransEdoAFD {
     public int IdEdo;
@@ -46,53 +47,35 @@ public class AFD {
         fw.close();
     }
 
-    public static AFD LeerAFDdeArchivo(String FileAFD, int idAFD) throws NumberFormatException, IOException{
+    public void LeerAFDdeArchivo(String FileAFD, int IdAFD) throws IOException {
         File archivo = new File(FileAFD);
         FileReader fr = new FileReader(archivo);
         BufferedReader br = new BufferedReader(fr);
-        int NumeroDeEstados = 0;
+
+        // Primero, lee todas las líneas del archivo en una lista
+        List<String> lineas = new ArrayList<>();
         String linea;
-        //int fila = 0;
-        ArrayList<ArrayList<Integer>> Aux = new ArrayList<>();
-        
-
-        while( (linea=br.readLine())!=null ){
-
-            String[] valores = linea.split(",");
-            ArrayList<Integer> fila = new ArrayList<>();
-
-            for(int col = 0;col<valores.length;col++){
-                //TablaAFD[fila][col] = Integer.parseInt(valores[col]);
-                fila.add(Integer.parseInt(valores[col]));
-            }
-            Aux.add(fila);
-            NumeroDeEstados++;
-            //fila++;
-
-        }
-        
-        /*int nFilas = Aux.size();
-        int nCols = Aux.get(0).size();*/
-
-        AFD nuevoAfd = new AFD(NumeroDeEstados, 1);
-
-        for(int i=0;i<NumeroDeEstados;i++){
-            ArrayList<Integer> fila1 = Aux.get(i);
-            for(int j=0;j<257;j++){
-                TablaAFD[i][j] = fila1.get(j);
-            }
+        while ((linea = br.readLine()) != null) {
+            lineas.add(linea);
         }
 
+        // Usa el número de líneas para inicializar TablaAFD
+        NumEstados = lineas.size();
+        TablaAFD = new int[NumEstados][257];
+
+        // Luego, llena TablaAFD con los valores del archivo
+        for (int fila = 0; fila < NumEstados; fila++) {
+            String[] valores = lineas.get(fila).split(",");
+            for (int col = 0; col < valores.length; col++) {
+                TablaAFD[fila][col] = Integer.parseInt(valores[col]);
+            }
+        }
 
         br.close();
         fr.close();
-        return nuevoAfd;
-
-
-
-
-
     }
 
-    
+
+
+
 }
