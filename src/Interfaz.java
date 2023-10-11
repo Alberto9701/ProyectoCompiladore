@@ -203,9 +203,45 @@ public class Interfaz extends JFrame implements ActionListener {
             panel.repaint();
         }
         if (e.getSource() == item4) {
-            JOptionPane.showMessageDialog(null, "Elegiste la opción 4");
+            panel.removeAll();
+            panel.revalidate();
+            panel.repaint();
+            panel.setLayout(new GridBagLayout());
+            JComboBox<AFN> entrada = new JComboBox<>();
+            for (AFN elemento: AFN.ConjDeAFNs) {
+                entrada.addItem(elemento);
+            }
+
+            constraints.gridx = 1;
+            constraints.gridy = 0;
+            panel.add(new JScrollPane(entrada), constraints);
+
+            JButton boton = new JButton("Convertir");
+            constraints.gridx = 1;
+            constraints.gridy = 4;
+            panel.add(boton, constraints);
+            panel.revalidate();
+            panel.repaint();
+
+            boton.addActionListener(e1 -> {
+                AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                afnSelec1.ConvAFNaAFD();
+            });
         }
         if (e.getSource() == item5) {
+            panel.removeAll();
+            panel.revalidate();
+            panel.repaint();
+            panel.setLayout(new GridBagLayout());
+            JComboBox<AFN> entrada = new JComboBox<>();
+            for (AFN elemento: AFN.ConjDeAFNs) {
+                entrada.addItem(elemento);
+            }
+
+            constraints.gridx = 1;
+            constraints.gridy = 0;
+            panel.add(new JScrollPane(entrada), constraints);
+            AFN afnselect1 = (AFN) entrada.getSelectedItem();
             JOptionPane.showMessageDialog(null, "Elegiste la opción 5");
         }
         if (e.getSource() == item6) {

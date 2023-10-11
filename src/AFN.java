@@ -163,7 +163,7 @@ public class AFN {
 
     public AFD ConvAFNaAFD () {
         int NumEdosAFD;
-        int i, ContadorEdos;
+        int i = 0, ContadorEdos;
         ConjIj Ij, Ik;
         boolean existe;
         
@@ -177,6 +177,10 @@ public class AFN {
         ContadorEdos = 0;
         Ij = new ConjIj();
         Ij.ConjI = CerraduraEpsilon(this.EdoIni);
+        System.out.println("Estados de cerradura epsilon");
+        for (Estado e: Ij.ConjI) {
+            System.out.println(e.getIdEstado());
+        }
         Ij.j = ContadorEdos;
 
         EdosAFD.add(Ij);
@@ -187,11 +191,12 @@ public class AFN {
             for (char c: this.Alfabeto) {
                 Ik = new ConjIj();
                 Ik.ConjI = IrA(Ij.ConjI, c);
+                
                 if (Ik.ConjI.size()==0) {
                     continue;
                 }
                 existe = false;
-
+                
                 for (ConjIj I : EdosAFD) {
                     if (I.ConjI.equals(Ik.ConjI)) {
                         existe = true;
@@ -206,10 +211,22 @@ public class AFN {
                     EdosSinAnalizar.add(Ik);
                     ContadorEdos++;
                 }
-
             }
         }
+        
+        for (ConjIj cj : EdosAFD) {
+            for (Estado e :  cj.ConjI) {
+                for (Estado e2 : this.EdosAcept) {
+                    if (e2.equals(e)) {
+                        ConjAux.add(e2);
+                    }
+                }
+            }
+        }
+
+
+        NumEdosAFD = ContadorEdos;
+        TransEdoAFD hola;
         return null;
     }
-
 }
