@@ -10,7 +10,7 @@ public class AFD {
     public static HashSet<AFD> ConjAFDs = new HashSet<>();
     public HashSet<Character> Alfabeto = new HashSet<>();
     public int NumEstados;
-    public int[][] TablaAFD;
+    public static int[][] TablaAFD;
     public int idAFD;
 
     public AFD() {
@@ -70,10 +70,19 @@ public class AFD {
             //fila++;
 
         }
+        
         /*int nFilas = Aux.size();
         int nCols = Aux.get(0).size();*/
 
         AFD nuevoAfd = new AFD(NumeroDeEstados, 1);
+
+        for(int i=0;i<NumeroDeEstados;i++){
+            ArrayList<Integer> fila1 = Aux.get(i);
+            for(int j=0;j<257;j++){
+                TablaAFD[i][j] = fila1.get(j);
+            }
+        }
+
 
         br.close();
         fr.close();
@@ -85,13 +94,5 @@ public class AFD {
 
     }
 
-    public void inicializarTablaTransiciones() {
-
-        for (int i = 0; i < NumEstados; i++) {
-            for (char c : Alfabeto) {
-
-                this.TablaAFD[i][c] = -1;
-            }
-        }
-    }
+    
 }
