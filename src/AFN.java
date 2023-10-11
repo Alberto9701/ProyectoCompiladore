@@ -1,5 +1,6 @@
 import java.util.HashSet;
 import java.util.Stack;
+import java.util.*;
 // hola xd
 //este es un comentario mio
 public class AFN {
@@ -15,7 +16,6 @@ public class AFN {
     public String toString() {
         return Integer.toString(IdAFN);
     }
-
     public AFN() {
         IdAFN = 0;
         EdoIni = null;
@@ -162,6 +162,57 @@ public class AFN {
             C = CerraduraEpsilon(e);
         }
         return C;
+    }
+
+    public AFD ConvAFNaAFD () {
+        int NumEdosAFD;
+        int i, ContadorEdos;
+        ConjIj Ij, Ik;
+        boolean existe;
+        
+        HashSet<Estado> ConjAux = new HashSet<>();
+        HashSet<ConjIj> EdosAFD = new HashSet<>();
+        Queue<ConjIj> EdosSinAnalizar = new LinkedList<>();
+
+        EdosAFD.clear();
+        EdosSinAnalizar.clear();
+
+        ContadorEdos = 0;
+        Ij = new ConjIj();
+        Ij.ConjI = CerraduraEpsilon(this.EdoIni);
+        Ij.j = ContadorEdos;
+
+        EdosAFD.add(Ij);
+        EdosSinAnalizar.add(Ij);
+        ContadorEdos++;
+        while (EdosSinAnalizar.size() != 0) {
+            Ij = EdosSinAnalizar.poll();
+            for (char c: this.Alfabeto) {
+                Ik = new ConjIj();
+                Ik.ConjI = IrA(Ij.ConjI, c);
+                if (Ik.ConjI.size()==0) {
+                    continue;
+                }
+                existe = false;
+
+                for (ConjIj I : EdosAFD) {
+                    if (I.ConjI.equals(Ik.ConjI)) {
+                        existe = true;
+                        Ij.TransicionesAFD[c] = I.j;
+                        break;
+                    }
+                }
+                if (!existe) {
+                    Ik.j = ContadorEdos;
+                    Ij.TransicionesAFD[c] = Ik.j;
+                    EdosAFD.add(Ik);
+                    EdosSinAnalizar.add(Ik);
+                    ContadorEdos++;
+                }
+
+            }
+        }
+        return null;
     }
 
 }

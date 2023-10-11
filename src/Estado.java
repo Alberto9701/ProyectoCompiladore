@@ -46,4 +46,9 @@ public class Estado {
     public void setTrans(HashSet<Transicion> trans) {
         Trans = trans;
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(idEstado);
+    }
 }
