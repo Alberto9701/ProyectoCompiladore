@@ -345,7 +345,60 @@ public class Interfaz extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == item7) {
+            panel.removeAll();
+            panel.setLayout(new FlowLayout());
 
+            JButton boton = new JButton("Crear AFN");
+            boton.addActionListener(e12 -> {
+                AFD afd = new AFD();
+                try {
+                    afd.LeerAFDdeArchivo("archivo.txt", 5);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                // Crear un modelo de tabla vacío
+                DefaultTableModel model = new DefaultTableModel();
+
+// Obtén el número de filas y columnas de tu tabla afd
+                int numRows = afd.TablaAFD.length;
+                int numCols = afd.TablaAFD[0].length;
+
+// Añade las columnas al modelo de la tabla
+                for (int col = 0; col < numCols; col++) {
+                    model.addColumn("Columna " + col);
+                }
+
+// Añade las filas al modelo de la tabla
+
+                for (int row = 0; row < numRows; row++) {
+                    Object[] rowData = new Object[numCols];
+                    for (int col = 0; col < numCols; col++) {
+                        rowData[col] = afd.TablaAFD[row][col];
+                    }
+                    model.addRow(rowData);
+                }
+
+// Asigna el modelo a tu jTable
+                JTable tabla = new JTable(model);
+                tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                JScrollPane barra = new JScrollPane(tabla);
+                barra.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                panel.add(barra);
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
+                JOptionPane.showMessageDialog(null, "Creaste AFN");
+
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
+            });
+            panel.add(boton);
+            this.add(panel);
+
+            // Actualizar el panel
+            panel.revalidate();
+            panel.repaint();
         }
     }
 
