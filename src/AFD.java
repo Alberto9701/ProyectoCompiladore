@@ -46,27 +46,40 @@ public class AFD {
         fw.close();
     }
 
-    public void LeerAFDdeArchivo(String FileAFD, int idAFD) throws NumberFormatException, IOException{
+    public AFD LeerAFDdeArchivo(String FileAFD, int idAFD) throws NumberFormatException, IOException{
         File archivo = new File(FileAFD);
         FileReader fr = new FileReader(archivo);
         BufferedReader br = new BufferedReader(fr);
         int NumeroDeEstados = 0;
         String linea;
-        int fila = 0;
+        //int fila = 0;
         ArrayList<ArrayList<Integer>> Aux = new ArrayList<>();
+        
 
         while( (linea=br.readLine())!=null ){
 
             String[] valores = linea.split(",");
+            ArrayList<Integer> fila = new ArrayList<>();
 
             for(int col = 0;col<valores.length;col++){
-                TablaAFD[fila][col] = Integer.parseInt(valores[col]);
+                //TablaAFD[fila][col] = Integer.parseInt(valores[col]);
+                fila.add(Integer.parseInt(valores[col]));
             }
-            fila++;
+            Aux.add(fila);
+            NumeroDeEstados++;
+            //fila++;
 
         }
+        /*int nFilas = Aux.size();
+        int nCols = Aux.get(0).size();*/
+
+        AFD nuevoAfd = new AFD(NumeroDeEstados, 1);
         br.close();
         fr.close();
+        return nuevoAfd;
+
+
+
 
 
     }
