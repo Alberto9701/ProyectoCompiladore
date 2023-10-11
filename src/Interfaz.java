@@ -357,6 +357,11 @@ public class Interfaz extends JFrame implements ActionListener {
                     throw new RuntimeException(ex);
                 }
                 // Crear un modelo de tabla vacío
+                try {
+                    afd = AFD.LeerAFDdeArchivo("archivo.txt", 5);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 DefaultTableModel model = new DefaultTableModel();
 
 // Obtén el número de filas y columnas de tu tabla afd

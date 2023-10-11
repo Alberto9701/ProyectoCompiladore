@@ -46,7 +46,7 @@ public class AFD {
         fw.close();
     }
 
-    public AFD LeerAFDdeArchivo(String FileAFD, int idAFD) throws NumberFormatException, IOException{
+    public static AFD LeerAFDdeArchivo(String FileAFD, int idAFD) throws NumberFormatException, IOException{
         File archivo = new File(FileAFD);
         FileReader fr = new FileReader(archivo);
         BufferedReader br = new BufferedReader(fr);
@@ -74,6 +74,7 @@ public class AFD {
         int nCols = Aux.get(0).size();*/
 
         AFD nuevoAfd = new AFD(NumeroDeEstados, 1);
+
         br.close();
         fr.close();
         return nuevoAfd;
