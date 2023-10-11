@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.*;
 public class AnalizLexico {
     int token, EdoActual, EdoTransicion;
@@ -24,7 +25,7 @@ public class AnalizLexico {
         AutomataFD = null;
     }
 
-    public AnalizLexico(String sigma, String FileAFD, int IdAFD){
+    public AnalizLexico(String sigma, String FileAFD, int IdAFD) throws NumberFormatException, IOException{
         AutomataFD = new AFD();
         CadenaSigma = sigma;
         PasoPorEdoAcept = false;
@@ -34,11 +35,11 @@ public class AnalizLexico {
         token = -1;
         Pila.clear();
         //metodo de la clase afd pendiente
-        //AutomataFD.LeerAFDdeArchivo(FileAFD, idAFD);
+        AutomataFD.LeerAFDdeArchivo(FileAFD, IdAFD);
 
     }
 
-    public AnalizLexico(String sigma, String FileAFD){
+    public AnalizLexico(String sigma, String FileAFD) throws NumberFormatException, IOException{
         AutomataFD = new AFD();
         CadenaSigma = sigma;
         PasoPorEdoAcept = false;
@@ -48,11 +49,11 @@ public class AnalizLexico {
         token = -1;
         Pila.clear();
         //metodo de la clase afd pendiente
-        //AutomataFD.LeerAFDdeArchivo(FileAFD, -1);
+        AutomataFD.LeerAFDdeArchivo(FileAFD, -1);
         
     }
 
-    public AnalizLexico(String FileAFD, int IdAFD){
+    public AnalizLexico(String FileAFD, int IdAFD) throws NumberFormatException, IOException{
         AutomataFD = new AFD();
         CadenaSigma = "";
         PasoPorEdoAcept = false;
@@ -62,7 +63,7 @@ public class AnalizLexico {
         token = -1;
         Pila.clear();
         //metodo de la clase afd pendiente
-        //AutomataFD.LeerAFDdeArchivo(FileAFD, idAFD);
+        AutomataFD.LeerAFDdeArchivo(FileAFD, IdAFD);
         
     }
 
