@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.io.*;
 
@@ -49,22 +50,34 @@ public class AFD {
         File archivo = new File(FileAFD);
         FileReader fr = new FileReader(archivo);
         BufferedReader br = new BufferedReader(fr);
-
+        int NumeroDeEstados = 0;
         String linea;
         int fila = 0;
+        ArrayList<ArrayList<Integer>> Aux = new ArrayList<>();
 
         while( (linea=br.readLine())!=null ){
+
             String[] valores = linea.split(",");
 
             for(int col = 0;col<valores.length;col++){
                 TablaAFD[fila][col] = Integer.parseInt(valores[col]);
             }
             fila++;
-        }
 
+        }
         br.close();
         fr.close();
 
 
+    }
+
+    public void inicializarTablaTransiciones() {
+
+        for (int i = 0; i < NumEstados; i++) {
+            for (char c : Alfabeto) {
+
+                this.TablaAFD[i][c] = -1;
+            }
+        }
     }
 }

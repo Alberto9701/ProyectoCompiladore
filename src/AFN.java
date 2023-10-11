@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Stack;
 import java.util.*;
@@ -164,9 +165,9 @@ public class AFN {
         return C;
     }
 
-    public AFD ConvAFNaAFD () {
+    public AFD ConvAFNaAFD () throws IOException {
         int NumEdosAFD;
-        int i = 0, ContadorEdos;
+        int i = 10, ContadorEdos, contid = 0;
         ConjIj Ij, Ik;
         boolean existe;
         
@@ -216,20 +217,28 @@ public class AFN {
                 }
             }
         }
-        
+        NumEdosAFD = ContadorEdos;
+        AFD afd = new AFD();
+        afd.NumEstados = NumEdosAFD;
+        afd.TablaAFD = new int[NumEdosAFD][257];
+        int i1 = 0;
         for (ConjIj cj : EdosAFD) {
             for (Estado e :  cj.ConjI) {
                 for (Estado e2 : this.EdosAcept) {
                     if (e2.equals(e)) {
                         ConjAux.add(e2);
+                        cj.TransicionesAFD[256] = i;
+                        i = i + 10;
                     }
                 }
             }
+            afd.TablaAFD[i1] = cj.TransicionesAFD;
+            i1++;
         }
 
+        afd.idAFD = 1;
 
-        NumEdosAFD = ContadorEdos;
-        TransEdoAFD hola;
-        return null;
+        afd.CrearArchivoTxt("archivo.txt");
+        return afd;
     }
 }

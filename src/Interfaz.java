@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -9,7 +10,7 @@ public class Interfaz extends JFrame implements ActionListener {
     int cont = 0;
     private JMenuBar barramenu;
     private JMenu menu;
-    private JMenuItem item1, item2, item3, item4, item5, item6;
+    private JMenuItem item1, item2, item3, item4, item5, item6, item7;
     JPanel panel = new JPanel();
     GridBagConstraints constraints = new GridBagConstraints();
 
@@ -44,6 +45,9 @@ public class Interfaz extends JFrame implements ActionListener {
         item6.addActionListener(this);
         menu.add(item6);
 
+        item7 = new JMenuItem("Pasar de TXT a programa");
+        item7.addActionListener(this);
+        menu.add(item7);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -206,27 +210,61 @@ public class Interfaz extends JFrame implements ActionListener {
             panel.removeAll();
             panel.revalidate();
             panel.repaint();
-            panel.setLayout(new GridBagLayout());
+            panel.setLayout(new FlowLayout());
             JComboBox<AFN> entrada = new JComboBox<>();
             for (AFN elemento: AFN.ConjDeAFNs) {
                 entrada.addItem(elemento);
             }
 
-            constraints.gridx = 1;
-            constraints.gridy = 0;
-            panel.add(new JScrollPane(entrada), constraints);
+            panel.add(new JScrollPane(entrada));
 
             JButton boton = new JButton("Convertir");
-            constraints.gridx = 1;
-            constraints.gridy = 4;
-            panel.add(boton, constraints);
+            panel.add(boton);
             panel.revalidate();
             panel.repaint();
 
             boton.addActionListener(e1 -> {
                 AFN afnSelec1 =(AFN) entrada.getSelectedItem();
-                afnSelec1.ConvAFNaAFD();
+                AFD afd = null;
+                try {
+                    afd = afnSelec1.ConvAFNaAFD();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                // Crear un modelo de tabla vacío
+                DefaultTableModel model = new DefaultTableModel();
+
+// Obtén el número de filas y columnas de tu tabla afd
+                int numRows = afd.TablaAFD.length;
+                int numCols = afd.TablaAFD[0].length;
+
+// Añade las columnas al modelo de la tabla
+                for (int col = 0; col < numCols; col++) {
+                    model.addColumn("Columna " + col);
+                }
+
+// Añade las filas al modelo de la tabla
+
+                for (int row = 0; row < numRows; row++) {
+                    Object[] rowData = new Object[numCols];
+                    for (int col = 0; col < numCols; col++) {
+                        rowData[col] = afd.TablaAFD[row][col];
+                    }
+                    model.addRow(rowData);
+                }
+
+// Asigna el modelo a tu jTable
+                JTable tabla = new JTable(model);
+                tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                JScrollPane barra = new JScrollPane(tabla);
+                barra.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                panel.add(barra);
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
             });
+
+
         }
         if (e.getSource() == item5) {
             panel.removeAll();
@@ -304,6 +342,10 @@ public class Interfaz extends JFrame implements ActionListener {
             // Actualizar el panel
             panel.revalidate();
             panel.repaint();
+        }
+
+        if (e.getSource() == item7) {
+
         }
     }
 
