@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -271,16 +272,99 @@ public class Interfaz extends JFrame implements ActionListener {
             panel.revalidate();
             panel.repaint();
             panel.setLayout(new GridBagLayout());
-            JComboBox<AFN> entrada = new JComboBox<>();
+            /*JComboBox<AFN> entrada = new JComboBox<>();
             for (AFN elemento: AFN.ConjDeAFNs) {
                 entrada.addItem(elemento);
             }
+        
+
 
             constraints.gridx = 1;
             constraints.gridy = 0;
             panel.add(new JScrollPane(entrada), constraints);
-            AFN afnselect1 = (AFN) entrada.getSelectedItem();
-            JOptionPane.showMessageDialog(null, "Elegiste la opción 5");
+            AFN afnselect1 = (AFN) entrada.getSelectedItem();*/
+            // JOptionPane.showMessageDialog(null, "Elegiste la opción 5");
+
+
+            //codigo prueba
+
+            JLabel idAfd = new JLabel("id Asignado");
+            constraints.gridx=1;
+            constraints.gridy = 1;
+            panel.add(idAfd,constraints);
+
+            JTextField idAsignado = new JTextField();
+            idAsignado.setPreferredSize(new Dimension(100,20));
+            constraints.gridx = 2;
+            panel.add(idAsignado, constraints);
+
+            JButton cargarArchivo = new JButton("Cargar Archivo");
+            constraints.gridx = 3;
+            //constraints.gridy = 2;
+            //cargarArchivo.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            //cargarArchivo.setBounds(20, 20, 200, 800);
+
+            panel.add(cargarArchivo,constraints);
+
+
+            //creamos un nuevo afd el cual se va a analizar
+            AFD afd1 = new AFD();
+            cargarArchivo.addActionListener(e1 -> {
+                JFileChooser fileChooser = new JFileChooser();
+                int seleccion = fileChooser.showOpenDialog(Interfaz.this);
+                
+                // Verificar si se seleccionó un archivo
+                if (seleccion == JFileChooser.APPROVE_OPTION) {
+                    // Obtener el archivo seleccionado
+                    File archivo = fileChooser.getSelectedFile();
+                    
+                    // Hacer algo con el archivo seleccionado
+                    System.out.println("Archivo seleccionado: " + archivo.getAbsolutePath());
+                    
+                    try {
+                        afd1.LeerAFDdeArchivo(archivo.getName(), Integer.parseInt(idAsignado.getText()));
+                    } catch (NumberFormatException | IOException e2) {
+                        // TODO Auto-generated catch block
+                        e2.printStackTrace();
+                        
+                    }
+                    
+                }
+            });
+            
+            
+            System.out.println("ESTO ES UN PRINT");
+            
+
+            JLabel sigma = new JLabel("Cadena a analizar: ");
+            constraints.gridx=1;
+            constraints.gridy = 3;
+            panel.add(sigma,constraints);
+
+            JTextField cadenaSigma = new JTextField();
+            cadenaSigma.setPreferredSize(new Dimension(300,30));
+            constraints.gridx = 2;
+            //constraints.gridy = 3;
+            panel.add(cadenaSigma, constraints);
+
+            JButton analizarCadena = new JButton("Analizar Cadena");
+            constraints.gridx = 3;
+            //constraints.gridy = 2;
+            //cargarArchivo.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            //cargarArchivo.setBounds(20, 20, 200, 800);
+
+            panel.add(analizarCadena,constraints);
+            // vamos a analizar cadena
+            analizarCadena.addActionListener(e1 -> {
+                
+                AnalizLexico analizLexico = new AnalizLexico(cadenaSigma.getText(), afd1);
+                System.out.println("analisis lexico");
+                System.out.println(analizLexico.UndoToken());
+            });
+
+
+
+            this.add(panel);
         }
         if (e.getSource() == item6) {
             panel.removeAll();
@@ -418,4 +502,5 @@ public class Interfaz extends JFrame implements ActionListener {
         ventana.setVisible(true);
         ventana.setBounds(0, 0, 800, 400);
     }
+
 }

@@ -11,7 +11,7 @@ public class AFD {
     public static HashSet<AFD> ConjAFDs = new HashSet<>();
     public HashSet<Character> Alfabeto = new HashSet<>();
     public int NumEstados;
-    public static int[][] TablaAFD;
+    public  int[][] TablaAFD;
     public int idAFD;
 
     public AFD() {
@@ -47,7 +47,7 @@ public class AFD {
         fw.close();
     }
 
-    public void LeerAFDdeArchivo(String FileAFD, int IdAFD) throws IOException {
+    public AFD LeerAFDdeArchivo(String FileAFD, int IdAFD) throws IOException {
         File archivo = new File(FileAFD);
         FileReader fr = new FileReader(archivo);
         BufferedReader br = new BufferedReader(fr);
@@ -71,8 +71,10 @@ public class AFD {
             }
         }
 
+        
         br.close();
         fr.close();
+        return this;
     }
 
 
