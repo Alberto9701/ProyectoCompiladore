@@ -92,8 +92,69 @@ public class ER_AFN {
         int Token;
         Token = L.yylex();
         switch (Token) {
-            case 10:
-                f.Cerr
+            case 30:
+                f.CerrPos();
+                if (Cp(f)) {
+                    return true;
+                }
+                return false;
+
+            case 40:
+                f.CerrKleen();
+                if (Cp(f)) {
+                    return true;
+                }
+                return false;
+            case 50:
+                f.CerrOpc();
+                if (Cp(f)) {
+                    return true;
+                }
+                return false;
         }
+        L.UndoToken();
+        return true;
+     }
+
+     public boolean F (AFN f) {
+        int Token;
+        char simb1, simb2;
+        Token = L.yylex();
+        switch (Token) {
+            case 60:
+                if (E(f)) {
+                    Token = L.yylex();
+                    if (Token == 70) {
+                        return true;
+                    }
+                }
+                return false;
+            case 80:
+                Token = L.yylex();
+                if (Token == 110) {
+                    simb1 = (L.yyText.charAt(0)=='\\')?L.yyText.charAt(1): L.yyText.charAt(0);
+                    Token = L.yylex();
+                    if (Token == 100) {
+                        Token = L.yylex();
+                        if (Token == 110) {
+                            simb2 = (L.yyText.charAt(0)=='\\')?L.yyText.charAt(1): L.yyText.charAt(0);
+                            Token = L.yylex();
+                            if (Token == 90) {
+                                f.CrearAFNBasico(simb1, simb2);
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            case 110:
+                simb1 = (L.yyText.charAt(0)=='\\')?L.yyText.charAt(1): L.yyText.charAt(0);
+                f.CrearAFNBasico(simb1);
+                return true;
+            default:
+                System.out.println("Operacion no válida");
+                break;
+        }
+        return false;
      }
 }

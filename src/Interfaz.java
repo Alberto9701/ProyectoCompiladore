@@ -11,7 +11,7 @@ public class Interfaz extends JFrame implements ActionListener {
     int cont = 0;
     private JMenuBar barramenu;
     private JMenu menu;
-    private JMenuItem item1, item2, item3, item4, item5, item6, item7;
+    private JMenuItem item1, item2, item3, item4, item5, item6, item7, item8, item10, item9;
     JPanel panel = new JPanel();
     GridBagConstraints constraints = new GridBagConstraints();
 
@@ -49,6 +49,18 @@ public class Interfaz extends JFrame implements ActionListener {
         item7 = new JMenuItem("Pasar de TXT a programa");
         item7.addActionListener(this);
         menu.add(item7);
+
+        item8 = new JMenuItem("Cerradura Positiva");
+        item8.addActionListener(this);
+        menu.add(item8);
+
+        item9 = new JMenuItem("Cerradura de Kleene");
+        item9.addActionListener(this);
+        menu.add(item9);
+
+        item10 = new JMenuItem("Operacion Opcional");
+        item10.addActionListener(this);
+        menu.add(item10);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -226,6 +238,7 @@ public class Interfaz extends JFrame implements ActionListener {
 
             boton.addActionListener(e1 -> {
                 AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                afnSelec1   = afnSelec1.combinarAFNS();
                 AFD afd = null;
                 try {
                     afd = afnSelec1.ConvAFNaAFD();
@@ -359,6 +372,7 @@ public class Interfaz extends JFrame implements ActionListener {
                 
                 AnalizLexico analizLexico = new AnalizLexico(cadenaSigma.getText(), afd1);
                 System.out.println("analisis lexico");
+                System.out.println(analizLexico.yylex());
                 System.out.println(analizLexico.UndoToken());
             });
 
@@ -488,6 +502,126 @@ public class Interfaz extends JFrame implements ActionListener {
                 panel.repaint();
             });
             panel.add(boton);
+            this.add(panel);
+
+            // Actualizar el panel
+            panel.revalidate();
+            panel.repaint();
+        }
+        if(e.getSource() == item8) {
+            panel.removeAll();
+            panel.setLayout(new GridBagLayout());
+            JLabel afn1 = new JLabel("Seleccione el automata a aplicarle la operacion: ");
+            constraints.gridx = 0;
+            constraints.gridy = 0;
+            panel.add(afn1, constraints);
+
+            JComboBox<AFN> entrada = new JComboBox<>();
+            for (AFN elemento: AFN.ConjDeAFNs) {
+                entrada.addItem(elemento);
+            }
+            constraints.gridx = 1;
+            panel.add(new JScrollPane(entrada), constraints);
+
+
+            JButton boton = new JButton("Aplicar cerradura transitiva");
+            boton.addActionListener(e1 -> {
+                AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                for (Estado est: afnSelec1.EdosAFN) {
+                    System.out.println(est.getIdEstado());
+                }
+
+                afnSelec1.CerrPos();
+
+                JOptionPane.showMessageDialog(null, "Se aplico la cerradura correctamente");
+                panel.removeAll();
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
+            });
+            constraints.gridx = 1;
+            constraints.gridy = 4;
+            panel.add(boton, constraints);
+            this.add(panel);
+
+            // Actualizar el panel
+            panel.revalidate();
+            panel.repaint();
+        }
+        if(e.getSource() == item9) {
+            panel.removeAll();
+            panel.setLayout(new GridBagLayout());
+            JLabel afn1 = new JLabel("Seleccione el automata a aplicarle la operacion: ");
+            constraints.gridx = 0;
+            constraints.gridy = 0;
+            panel.add(afn1, constraints);
+
+            JComboBox<AFN> entrada = new JComboBox<>();
+            for (AFN elemento: AFN.ConjDeAFNs) {
+                entrada.addItem(elemento);
+            }
+            constraints.gridx = 1;
+            panel.add(new JScrollPane(entrada), constraints);
+
+
+            JButton boton = new JButton("Aplicar cerradura de Kleene");
+            boton.addActionListener(e1 -> {
+                AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                for (Estado est: afnSelec1.EdosAFN) {
+                    System.out.println(est.getIdEstado());
+                }
+
+                afnSelec1.CerrKleen();
+
+                JOptionPane.showMessageDialog(null, "Se aplico la cerradura correctamente");
+                panel.removeAll();
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
+            });
+            constraints.gridx = 1;
+            constraints.gridy = 4;
+            panel.add(boton, constraints);
+            this.add(panel);
+
+            // Actualizar el panel
+            panel.revalidate();
+            panel.repaint();
+        }
+        if(e.getSource() == item10) {
+            panel.removeAll();
+            panel.setLayout(new GridBagLayout());
+            JLabel afn1 = new JLabel("Seleccione el automata a aplicarle la operacion: ");
+            constraints.gridx = 0;
+            constraints.gridy = 0;
+            panel.add(afn1, constraints);
+
+            JComboBox<AFN> entrada = new JComboBox<>();
+            for (AFN elemento: AFN.ConjDeAFNs) {
+                entrada.addItem(elemento);
+            }
+            constraints.gridx = 1;
+            panel.add(new JScrollPane(entrada), constraints);
+
+
+            JButton boton = new JButton("Aplicar operación opcional");
+            boton.addActionListener(e1 -> {
+                AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                for (Estado est: afnSelec1.EdosAFN) {
+                    System.out.println(est.getIdEstado());
+                }
+
+                afnSelec1.CerrOpc();
+
+                JOptionPane.showMessageDialog(null, "Se aplico la operación correctamente");
+                panel.removeAll();
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
+            });
+            constraints.gridx = 1;
+            constraints.gridy = 4;
+            panel.add(boton, constraints);
             this.add(panel);
 
             // Actualizar el panel

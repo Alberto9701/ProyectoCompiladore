@@ -2,8 +2,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Stack;
 import java.util.*;
-// hola xd
-//este es un comentario mio
+
 public class AFN {
     public static HashSet<AFN> ConjDeAFNs = new HashSet<AFN>();
     Estado EdoIni;
@@ -62,6 +61,78 @@ public class AFN {
         return this;
     }
 
+    public AFN CerrPos() {
+        Estado e_ini = new Estado();
+        Estado e_fin = new Estado();
+        e_fin.setEdoAcept(true);
+        e_ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
+        for (Estado e : EdosAcept) {
+            e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, e_fin));
+            e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
+            e.setEdoAcept(false);
+        }
+        EdosAFN.add(e_ini);
+        EdosAFN.add(e_fin);
+        EdoIni = e_ini;
+        EdosAcept.clear();
+        EdosAcept.add(e_fin);
+
+        return this;
+    }
+    public AFN CerrKleen() {
+        Estado e_ini = new Estado();
+        Estado e_fin = new Estado();
+        e_fin.setEdoAcept(true);
+
+        e_ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
+        e_ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, e_fin)); // Transición epsilon del nuevo estado inicial al nuevo estado final
+        for (Estado e : EdosAcept) {
+            e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, e_fin));
+            e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
+            e.setEdoAcept(false);
+        }
+        EdosAFN.add(e_ini);
+        EdosAFN.add(e_fin);
+        EdoIni = e_ini;
+        EdosAcept.clear();
+        EdosAcept.add(e_fin);
+        return this;
+    }
+
+    public AFN CerrOpc() {
+        Estado e_ini = new Estado();
+        Estado e_fin = new Estado();
+        e_fin.setEdoAcept(true);
+
+        e_ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
+        e_ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, e_fin)); // Transición epsilon del nuevo estado inicial al nuevo estado final
+        for (Estado e : EdosAcept) {
+            e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, e_fin));
+            e.setEdoAcept(false);
+        }
+        EdosAFN.add(e_ini);
+        EdosAFN.add(e_fin);
+        EdoIni = e_ini;
+        EdosAcept.clear();
+        EdosAcept.add(e_fin);
+        return this;
+    }
+
+    public AFN combinarAFNS() {
+        Estado e1 = new Estado();
+        for (AFN afn : ConjDeAFNs) {
+            e1.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, afn.EdoIni));
+            afn.EdoIni = e1;
+            this.EdosAFN.addAll(afn.EdosAFN);
+            this.EdosAcept.addAll(afn.EdosAcept);
+            this.Alfabeto.addAll(afn.Alfabeto);
+        }
+        ConjDeAFNs.clear();
+        ConjDeAFNs.add(this);
+        EdoIni = e1;
+        EdosAFN.add(e1);
+        return this;
+    }
     public AFN UnirAFN(AFN f2) {
         Estado e1 = new Estado();
         Estado e2 = new Estado();
@@ -164,10 +235,10 @@ public class AFN {
         }
         return C;
     }
-
+    public static int contid = 0;
     public AFD ConvAFNaAFD () throws IOException {
         int NumEdosAFD;
-        int i = 10, ContadorEdos, contid = 0;
+        int i = 10, ContadorEdos;
         ConjIj Ij, Ik;
         boolean existe;
         
@@ -236,7 +307,7 @@ public class AFN {
             i1++;
         }
 
-        afd.idAFD = 1;
+        afd.idAFD = contid++;
 
         afd.CrearArchivoTxt("archivo.txt");
         return afd;
