@@ -370,10 +370,22 @@ public class Interfaz extends JFrame implements ActionListener {
             // vamos a analizar cadena
             analizarCadena.addActionListener(e1 -> {
                 
+                // AnalizLexico analizLexico = new AnalizLexico(cadenaSigma.getText(), afd1);
+                // analizLexico.EdoActual = 0;
                 AnalizLexico analizLexico = new AnalizLexico(cadenaSigma.getText(), afd1);
-                System.out.println("analisis lexico");
-                System.out.println(analizLexico.yylex());
-                System.out.println(analizLexico.UndoToken());
+                analizLexico.EdoActual = 0;
+
+                System.out.println("token\tcaracter");
+                int token;
+                do {
+                    token = analizLexico.yylex();
+                    String caracter = analizLexico.yyText;
+                    System.out.println(token + "\t" + caracter);
+                    System.out.println("\n");
+                } while (token != SimbolosEspeciales.FIN);
+
+                // Realizar el undoToken si es necesario
+                // analizLexico.UndoToken();
             });
 
 
