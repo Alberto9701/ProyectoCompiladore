@@ -238,7 +238,7 @@ public class AFN {
     public static int contid = 0;
     public AFD ConvAFNaAFD () throws IOException {
         int NumEdosAFD;
-        int i = 10, ContadorEdos;
+        int i = 10, ContadorEdos, j1 = 0;
         ConjIj Ij, Ik;
         boolean existe;
         
@@ -288,12 +288,24 @@ public class AFN {
                 }
             }
         }
+
+        // Crear una lista a partir del conjunto EdosAFD
+        List<ConjIj> listaEdosAFD = new ArrayList<>(EdosAFD);
+
+// Ordenar la lista por el id (j)
+        Collections.sort(listaEdosAFD, new Comparator<ConjIj>() {
+            @Override
+            public int compare(ConjIj o1, ConjIj o2) {
+                return Integer.compare(o1.j, o2.j);
+            }
+        });
         NumEdosAFD = ContadorEdos;
         AFD afd = new AFD();
         afd.NumEstados = NumEdosAFD;
         afd.TablaAFD = new int[NumEdosAFD][257];
         int i1 = 0;
-        for (ConjIj cj : EdosAFD) {
+        System.out.println("Estados AFD");
+        for (ConjIj cj : listaEdosAFD) {
             for (Estado e :  cj.ConjI) {
                 for (Estado e2 : this.EdosAcept) {
                     if (e2.equals(e)) {
@@ -303,6 +315,8 @@ public class AFN {
                     }
                 }
             }
+            System.out.println(cj.j);
+
             afd.TablaAFD[i1] = cj.TransicionesAFD;
             i1++;
         }
