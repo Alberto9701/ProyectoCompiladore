@@ -377,15 +377,62 @@ public class Interfaz extends JFrame implements ActionListener {
 
                 System.out.println("token\tcaracter");
                 int token;
+                //ELEMENTOS PARA LA TABLA
+                DefaultTableModel model = new DefaultTableModel();
+                model.addColumn("Caracter");
+                model.addColumn("Token");
                 do {
+                    Object[] rowData = new Object[2]; 
                     token = analizLexico.yylex();
                     String caracter = analizLexico.yyText;
+                    System.out.println("IMPRESION\n");
                     System.out.println(token + "\t" + caracter);
-                    System.out.println("\n");
+                    rowData[0] = caracter;
+                    // System.out.println("\n");
+                    rowData[1] = token;
+                    model.addRow(rowData);
                 } while (token != SimbolosEspeciales.FIN);
 
                 // Realizar el undoToken si es necesario
                 // analizLexico.UndoToken();
+
+                // Crear un modelo de tabla vacío
+
+                // Obtén el número de filas y columnas de tu tabla afd
+                
+                
+
+                // Añade las columnas al modelo de la tabla
+                // for (int col = 0; col < numCols; col++) {
+                //     model.addColumn("Columna " + col);
+                // }
+                
+
+
+                // Añade las filas al modelo de la tabla
+                // System.out.println("HACIENDO LA TABLA");
+                // do {
+                //     Object[] rowData = new Object[2];
+                //     token = analizLexico.yylex();
+                //     String caracter = analizLexico.yyText;
+                //     rowData[0] = token;
+                //     System.out.println(token + "\t" + caracter);
+                //     rowData[1] = caracter;
+                //     System.out.println("\n");
+                //     model.addRow(rowData);
+                // } while (token != SimbolosEspeciales.FIN);
+            
+                
+
+                // Asigna el modelo a tu jTable
+                JTable tabla = new JTable(model);
+                tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                JScrollPane barra = new JScrollPane(tabla);
+                barra.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                panel.add(barra);
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
             });
 
 
