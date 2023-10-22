@@ -4,8 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
+import java.util.List;
 
 public class Interfaz extends JFrame implements ActionListener {
     int cont = 0;
@@ -220,16 +220,11 @@ public class Interfaz extends JFrame implements ActionListener {
             panel.repaint();
         }
         if (e.getSource() == item4) {
+            Estado.valorToken = 10;
             panel.removeAll();
             panel.revalidate();
             panel.repaint();
             panel.setLayout(new FlowLayout());
-            JComboBox<AFN> entrada = new JComboBox<>();
-            for (AFN elemento: AFN.ConjDeAFNs) {
-                entrada.addItem(elemento);
-            }
-
-            panel.add(new JScrollPane(entrada));
 
             JButton boton = new JButton("Convertir");
             panel.add(boton);
@@ -237,9 +232,15 @@ public class Interfaz extends JFrame implements ActionListener {
             panel.repaint();
 
             boton.addActionListener(e1 -> {
-                AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                AFN afnSelec1 = new AFN();
+                List<AFN> list = new ArrayList<>(AFN.ConjDeAFNs);
+                Collections.sort(list, Comparator.comparingInt(o -> o.IdAFN));
+                for (AFN afn1 : list) {
+                    afnSelec1 = afn1;
+                    break;
+                }
                 afnSelec1   = afnSelec1.combinarAFNS();
-                AFD afd = null;
+                AFD afd;
                 try {
                     afd = afnSelec1.ConvAFNaAFD();
                 } catch (IOException ex) {
@@ -554,7 +555,7 @@ public class Interfaz extends JFrame implements ActionListener {
                 // Actualizar el panel
                 panel.revalidate();
                 panel.repaint();
-                JOptionPane.showMessageDialog(null, "Creaste AFN");
+                JOptionPane.showMessageDialog(null, "Creaste AFD");
 
                 // Actualizar el panel
                 panel.revalidate();

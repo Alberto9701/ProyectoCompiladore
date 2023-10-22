@@ -1,6 +1,7 @@
 import java.util.HashSet;
 
 public class Estado {
+    public static int valorToken = 10;
     static int ContadorIdEstado = 0;
     private int idEstado;
     private boolean EdoAcept;

@@ -119,16 +119,32 @@ public class AFN {
     }
 
     public AFN combinarAFNS() {
+        Estado.valorToken = 10;
         Estado e1 = new Estado();
-        for (AFN afn : ConjDeAFNs) {
+        List<AFN> list = new ArrayList<>(ConjDeAFNs);
+        Collections.sort(list, Comparator.comparingInt(o -> o.IdAFN));
+
+        for (AFN afn : list) {
             e1.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, afn.EdoIni));
             afn.EdoIni = e1;
+            for (Estado e : afn.EdosAcept) {
+                e.setToken(Estado.valorToken);
+                Estado.valorToken = Estado.valorToken + 10;
+            }
             this.EdosAFN.addAll(afn.EdosAFN);
             this.EdosAcept.addAll(afn.EdosAcept);
             this.Alfabeto.addAll(afn.Alfabeto);
         }
+
+        System.out.println("VERIFICANDO SI LOS TOKENS SON CORRECTOS");
+        for (AFN afn : list) {
+            System.out.println("AFN " + afn.IdAFN);
+            for (Estado e : afn.EdosAcept) {
+                System.out.println("Token: " + e.getToken());
+            }
+        }
         ConjDeAFNs.clear();
-        ConjDeAFNs.add(this);
+        //ConjDeAFNs.add(this);
         EdoIni = e1;
         EdosAFN.add(e1);
         return this;
@@ -168,6 +184,7 @@ public class AFN {
             }
         }
         f2.EdosAFN.remove(f2.EdoIni);
+        this.EdosAcept.clear(); //agregado por yael
         this.EdosAcept = f2.EdosAcept;
         this.EdosAFN.addAll(f2.EdosAFN);
         this.Alfabeto.addAll(f2.Alfabeto);
@@ -238,7 +255,7 @@ public class AFN {
     public static int contid = 0;
     public AFD ConvAFNaAFD () throws IOException {
         int NumEdosAFD;
-        int i = 10, ContadorEdos, j1 = 0;
+        int ContadorEdos;
         ConjIj Ij, Ik;
         boolean existe;
         
@@ -252,10 +269,6 @@ public class AFN {
         ContadorEdos = 0;
         Ij = new ConjIj();
         Ij.ConjI = CerraduraEpsilon(this.EdoIni);
-        System.out.println("Estados de cerradura epsilon");
-        for (Estado e: Ij.ConjI) {
-            System.out.println(e.getIdEstado());
-        }
         Ij.j = ContadorEdos;
 
         EdosAFD.add(Ij);
@@ -292,30 +305,28 @@ public class AFN {
         // Crear una lista a partir del conjunto EdosAFD
         List<ConjIj> listaEdosAFD = new ArrayList<>(EdosAFD);
 
-// Ordenar la lista por el id (j)
-        Collections.sort(listaEdosAFD, new Comparator<ConjIj>() {
-            @Override
-            public int compare(ConjIj o1, ConjIj o2) {
-                return Integer.compare(o1.j, o2.j);
-            }
-        });
+        // Ordenar la lista por el id (j)
+        Collections.sort(listaEdosAFD, Comparator.comparingInt(o -> o.j));
         NumEdosAFD = ContadorEdos;
         AFD afd = new AFD();
         afd.NumEstados = NumEdosAFD;
         afd.TablaAFD = new int[NumEdosAFD][257];
         int i1 = 0;
-        System.out.println("Estados AFD");
+        //System.out.println("Estados AFD");
         for (ConjIj cj : listaEdosAFD) {
             for (Estado e :  cj.ConjI) {
                 for (Estado e2 : this.EdosAcept) {
                     if (e2.equals(e)) {
-                        ConjAux.add(e2);
-                        cj.TransicionesAFD[256] = i;
-                        i = i + 10;
+                        //if (e2.getToken() == -1) {
+                            //e2.setToken(Estado.valorToken);
+                            //Estado.valorToken = Estado.valorToken + 10;
+                        //}
+                        ConjAux.add(e);
+                        cj.TransicionesAFD[256] = e2.getToken();
                     }
                 }
             }
-            System.out.println(cj.j);
+            //System.out.println(cj.j);
 
             afd.TablaAFD[i1] = cj.TransicionesAFD;
             i1++;
