@@ -333,7 +333,6 @@ public class Interfaz extends JFrame implements ActionListener {
             });
             
             
-            System.out.println("ESTO ES UN PRINT");
             
 
             JLabel sigma = new JLabel("Cadena a analizar: ");
@@ -358,8 +357,10 @@ public class Interfaz extends JFrame implements ActionListener {
             analizarCadena.addActionListener(e1 -> {
                 
                 AnalizLexico analizLexico = new AnalizLexico(cadenaSigma.getText(), afd1);
-                System.out.println("analisis lexico");
+                System.out.println("analisis lexico Este es el yylex: ");
+                System.out.println(analizLexico.yylex());
                 System.out.println(analizLexico.UndoToken());
+
             });
 
 

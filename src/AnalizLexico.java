@@ -18,7 +18,8 @@ public class AnalizLexico {
 	public AnalizLexico(){
 		CadenaSigma = "";
 		PasoPorEdoAcept = false;
-		IniLexema = FinLexema -1;
+		IniLexema = -1;
+		FinLexema =-1;
 		IndiceCaracterActual = -1;
 		token = -1;
 		Pila.clear();
