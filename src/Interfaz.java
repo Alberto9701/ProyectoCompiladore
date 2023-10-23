@@ -387,6 +387,9 @@ public class Interfaz extends JFrame implements ActionListener {
                     String caracter = analizLexico.yyText;
                     System.out.println("IMPRESION\n");
                     System.out.println(token + "\t" + caracter);
+                    if(token == SimbolosEspeciales.FIN){
+                        break;
+                    }
                     rowData[0] = caracter;
                     // System.out.println("\n");
                     rowData[1] = token;
