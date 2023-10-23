@@ -4,14 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
+import java.util.List;
 
 public class Interfaz extends JFrame implements ActionListener {
     int cont = 0;
     private JMenuBar barramenu;
     private JMenu menu;
-    private JMenuItem item1, item2, item3, item4, item5, item6, item7;
+    private JMenuItem item1, item2, item3, item4, item5, item6, item7, item8, item10, item9;
     JPanel panel = new JPanel();
     GridBagConstraints constraints = new GridBagConstraints();
 
@@ -49,6 +49,18 @@ public class Interfaz extends JFrame implements ActionListener {
         item7 = new JMenuItem("Pasar de TXT a programa");
         item7.addActionListener(this);
         menu.add(item7);
+
+        item8 = new JMenuItem("Cerradura Positiva");
+        item8.addActionListener(this);
+        menu.add(item8);
+
+        item9 = new JMenuItem("Cerradura de Kleene");
+        item9.addActionListener(this);
+        menu.add(item9);
+
+        item10 = new JMenuItem("Operacion Opcional");
+        item10.addActionListener(this);
+        menu.add(item10);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -208,16 +220,11 @@ public class Interfaz extends JFrame implements ActionListener {
             panel.repaint();
         }
         if (e.getSource() == item4) {
+            Estado.valorToken = 10;
             panel.removeAll();
             panel.revalidate();
             panel.repaint();
             panel.setLayout(new FlowLayout());
-            JComboBox<AFN> entrada = new JComboBox<>();
-            for (AFN elemento: AFN.ConjDeAFNs) {
-                entrada.addItem(elemento);
-            }
-
-            panel.add(new JScrollPane(entrada));
 
             JButton boton = new JButton("Convertir");
             panel.add(boton);
@@ -225,8 +232,15 @@ public class Interfaz extends JFrame implements ActionListener {
             panel.repaint();
 
             boton.addActionListener(e1 -> {
-                AFN afnSelec1 =(AFN) entrada.getSelectedItem();
-                AFD afd = null;
+                AFN afnSelec1 = new AFN();
+                List<AFN> list = new ArrayList<>(AFN.ConjDeAFNs);
+                Collections.sort(list, Comparator.comparingInt(o -> o.IdAFN));
+                for (AFN afn1 : list) {
+                    afnSelec1 = afn1;
+                    break;
+                }
+                afnSelec1   = afnSelec1.combinarAFNS();
+                AFD afd;
                 try {
                     afd = afnSelec1.ConvAFNaAFD();
                 } catch (IOException ex) {
@@ -356,11 +370,69 @@ public class Interfaz extends JFrame implements ActionListener {
             // vamos a analizar cadena
             analizarCadena.addActionListener(e1 -> {
                 
+                // AnalizLexico analizLexico = new AnalizLexico(cadenaSigma.getText(), afd1);
+                // analizLexico.EdoActual = 0;
                 AnalizLexico analizLexico = new AnalizLexico(cadenaSigma.getText(), afd1);
-                System.out.println("analisis lexico Este es el yylex: ");
-                System.out.println(analizLexico.yylex());
-                System.out.println(analizLexico.UndoToken());
+                analizLexico.EdoActual = 0;
 
+                System.out.println("token\tcaracter");
+                int token;
+                //ELEMENTOS PARA LA TABLA
+                DefaultTableModel model = new DefaultTableModel();
+                model.addColumn("Caracter");
+                model.addColumn("Token");
+                do {
+                    Object[] rowData = new Object[2]; 
+                    token = analizLexico.yylex();
+                    String caracter = analizLexico.yyText;
+                    System.out.println("IMPRESION\n");
+                    System.out.println(token + "\t" + caracter);
+                    rowData[0] = caracter;
+                    // System.out.println("\n");
+                    rowData[1] = token;
+                    model.addRow(rowData);
+                } while (token != SimbolosEspeciales.FIN);
+
+                // Realizar el undoToken si es necesario
+                // analizLexico.UndoToken();
+
+                // Crear un modelo de tabla vacío
+
+                // Obtén el número de filas y columnas de tu tabla afd
+                
+                
+
+                // Añade las columnas al modelo de la tabla
+                // for (int col = 0; col < numCols; col++) {
+                //     model.addColumn("Columna " + col);
+                // }
+                
+
+
+                // Añade las filas al modelo de la tabla
+                // System.out.println("HACIENDO LA TABLA");
+                // do {
+                //     Object[] rowData = new Object[2];
+                //     token = analizLexico.yylex();
+                //     String caracter = analizLexico.yyText;
+                //     rowData[0] = token;
+                //     System.out.println(token + "\t" + caracter);
+                //     rowData[1] = caracter;
+                //     System.out.println("\n");
+                //     model.addRow(rowData);
+                // } while (token != SimbolosEspeciales.FIN);
+            
+                
+
+                // Asigna el modelo a tu jTable
+                JTable tabla = new JTable(model);
+                tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                JScrollPane barra = new JScrollPane(tabla);
+                barra.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                panel.add(barra);
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
             });
 
 
@@ -482,13 +554,133 @@ public class Interfaz extends JFrame implements ActionListener {
                 // Actualizar el panel
                 panel.revalidate();
                 panel.repaint();
-                JOptionPane.showMessageDialog(null, "Creaste AFN");
+                JOptionPane.showMessageDialog(null, "Creaste AFD");
 
                 // Actualizar el panel
                 panel.revalidate();
                 panel.repaint();
             });
             panel.add(boton);
+            this.add(panel);
+
+            // Actualizar el panel
+            panel.revalidate();
+            panel.repaint();
+        }
+        if(e.getSource() == item8) {
+            panel.removeAll();
+            panel.setLayout(new GridBagLayout());
+            JLabel afn1 = new JLabel("Seleccione el automata a aplicarle la operacion: ");
+            constraints.gridx = 0;
+            constraints.gridy = 0;
+            panel.add(afn1, constraints);
+
+            JComboBox<AFN> entrada = new JComboBox<>();
+            for (AFN elemento: AFN.ConjDeAFNs) {
+                entrada.addItem(elemento);
+            }
+            constraints.gridx = 1;
+            panel.add(new JScrollPane(entrada), constraints);
+
+
+            JButton boton = new JButton("Aplicar cerradura transitiva");
+            boton.addActionListener(e1 -> {
+                AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                for (Estado est: afnSelec1.EdosAFN) {
+                    System.out.println(est.getIdEstado());
+                }
+
+                afnSelec1.CerrPos();
+
+                JOptionPane.showMessageDialog(null, "Se aplico la cerradura correctamente");
+                panel.removeAll();
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
+            });
+            constraints.gridx = 1;
+            constraints.gridy = 4;
+            panel.add(boton, constraints);
+            this.add(panel);
+
+            // Actualizar el panel
+            panel.revalidate();
+            panel.repaint();
+        }
+        if(e.getSource() == item9) {
+            panel.removeAll();
+            panel.setLayout(new GridBagLayout());
+            JLabel afn1 = new JLabel("Seleccione el automata a aplicarle la operacion: ");
+            constraints.gridx = 0;
+            constraints.gridy = 0;
+            panel.add(afn1, constraints);
+
+            JComboBox<AFN> entrada = new JComboBox<>();
+            for (AFN elemento: AFN.ConjDeAFNs) {
+                entrada.addItem(elemento);
+            }
+            constraints.gridx = 1;
+            panel.add(new JScrollPane(entrada), constraints);
+
+
+            JButton boton = new JButton("Aplicar cerradura de Kleene");
+            boton.addActionListener(e1 -> {
+                AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                for (Estado est: afnSelec1.EdosAFN) {
+                    System.out.println(est.getIdEstado());
+                }
+
+                afnSelec1.CerrKleen();
+
+                JOptionPane.showMessageDialog(null, "Se aplico la cerradura correctamente");
+                panel.removeAll();
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
+            });
+            constraints.gridx = 1;
+            constraints.gridy = 4;
+            panel.add(boton, constraints);
+            this.add(panel);
+
+            // Actualizar el panel
+            panel.revalidate();
+            panel.repaint();
+        }
+        if(e.getSource() == item10) {
+            panel.removeAll();
+            panel.setLayout(new GridBagLayout());
+            JLabel afn1 = new JLabel("Seleccione el automata a aplicarle la operacion: ");
+            constraints.gridx = 0;
+            constraints.gridy = 0;
+            panel.add(afn1, constraints);
+
+            JComboBox<AFN> entrada = new JComboBox<>();
+            for (AFN elemento: AFN.ConjDeAFNs) {
+                entrada.addItem(elemento);
+            }
+            constraints.gridx = 1;
+            panel.add(new JScrollPane(entrada), constraints);
+
+
+            JButton boton = new JButton("Aplicar operación opcional");
+            boton.addActionListener(e1 -> {
+                AFN afnSelec1 =(AFN) entrada.getSelectedItem();
+                for (Estado est: afnSelec1.EdosAFN) {
+                    System.out.println(est.getIdEstado());
+                }
+
+                afnSelec1.CerrOpc();
+
+                JOptionPane.showMessageDialog(null, "Se aplico la operación correctamente");
+                panel.removeAll();
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
+            });
+            constraints.gridx = 1;
+            constraints.gridy = 4;
+            panel.add(boton, constraints);
             this.add(panel);
 
             // Actualizar el panel

@@ -2,8 +2,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Stack;
 import java.util.*;
-// hola xd
-//este es un comentario mio
+
 public class AFN {
     public static HashSet<AFN> ConjDeAFNs = new HashSet<AFN>();
     Estado EdoIni;
@@ -62,6 +61,94 @@ public class AFN {
         return this;
     }
 
+    public AFN CerrPos() {
+        Estado e_ini = new Estado();
+        Estado e_fin = new Estado();
+        e_fin.setEdoAcept(true);
+        e_ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
+        for (Estado e : EdosAcept) {
+            e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, e_fin));
+            e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
+            e.setEdoAcept(false);
+        }
+        EdosAFN.add(e_ini);
+        EdosAFN.add(e_fin);
+        EdoIni = e_ini;
+        EdosAcept.clear();
+        EdosAcept.add(e_fin);
+
+        return this;
+    }
+    public AFN CerrKleen() {
+        Estado e_ini = new Estado();
+        Estado e_fin = new Estado();
+        e_fin.setEdoAcept(true);
+
+        e_ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
+        e_ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, e_fin)); // Transición epsilon del nuevo estado inicial al nuevo estado final
+        for (Estado e : EdosAcept) {
+            e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, e_fin));
+            e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
+            e.setEdoAcept(false);
+        }
+        EdosAFN.add(e_ini);
+        EdosAFN.add(e_fin);
+        EdoIni = e_ini;
+        EdosAcept.clear();
+        EdosAcept.add(e_fin);
+        return this;
+    }
+
+    public AFN CerrOpc() {
+        Estado e_ini = new Estado();
+        Estado e_fin = new Estado();
+        e_fin.setEdoAcept(true);
+
+        e_ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, EdoIni));
+        e_ini.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, e_fin)); // Transición epsilon del nuevo estado inicial al nuevo estado final
+        for (Estado e : EdosAcept) {
+            e.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, e_fin));
+            e.setEdoAcept(false);
+        }
+        EdosAFN.add(e_ini);
+        EdosAFN.add(e_fin);
+        EdoIni = e_ini;
+        EdosAcept.clear();
+        EdosAcept.add(e_fin);
+        return this;
+    }
+
+    public AFN combinarAFNS() {
+        Estado.valorToken = 10;
+        Estado e1 = new Estado();
+        List<AFN> list = new ArrayList<>(ConjDeAFNs);
+        Collections.sort(list, Comparator.comparingInt(o -> o.IdAFN));
+
+        for (AFN afn : list) {
+            e1.getTrans().add(new Transicion(SimbolosEspeciales.EPSILON, afn.EdoIni));
+            afn.EdoIni = e1;
+            for (Estado e : afn.EdosAcept) {
+                e.setToken(Estado.valorToken);
+                Estado.valorToken = Estado.valorToken + 10;
+            }
+            this.EdosAFN.addAll(afn.EdosAFN);
+            this.EdosAcept.addAll(afn.EdosAcept);
+            this.Alfabeto.addAll(afn.Alfabeto);
+        }
+
+        System.out.println("VERIFICANDO SI LOS TOKENS SON CORRECTOS");
+        for (AFN afn : list) {
+            System.out.println("AFN " + afn.IdAFN);
+            for (Estado e : afn.EdosAcept) {
+                System.out.println("Token: " + e.getToken());
+            }
+        }
+        ConjDeAFNs.clear();
+        //ConjDeAFNs.add(this);
+        EdoIni = e1;
+        EdosAFN.add(e1);
+        return this;
+    }
     public AFN UnirAFN(AFN f2) {
         Estado e1 = new Estado();
         Estado e2 = new Estado();
@@ -97,6 +184,7 @@ public class AFN {
             }
         }
         f2.EdosAFN.remove(f2.EdoIni);
+        this.EdosAcept.clear(); //agregado por yael
         this.EdosAcept = f2.EdosAcept;
         this.EdosAFN.addAll(f2.EdosAFN);
         this.Alfabeto.addAll(f2.Alfabeto);
@@ -164,10 +252,10 @@ public class AFN {
         }
         return C;
     }
-
+    public static int contid = 0;
     public AFD ConvAFNaAFD () throws IOException {
         int NumEdosAFD;
-        int i = 10, ContadorEdos, contid = 0;
+        int ContadorEdos;
         ConjIj Ij, Ik;
         boolean existe;
         
@@ -181,10 +269,6 @@ public class AFN {
         ContadorEdos = 0;
         Ij = new ConjIj();
         Ij.ConjI = CerraduraEpsilon(this.EdoIni);
-        System.out.println("Estados de cerradura epsilon");
-        for (Estado e: Ij.ConjI) {
-            System.out.println(e.getIdEstado());
-        }
         Ij.j = ContadorEdos;
 
         EdosAFD.add(Ij);
@@ -217,26 +301,38 @@ public class AFN {
                 }
             }
         }
+
+        // Crear una lista a partir del conjunto EdosAFD
+        List<ConjIj> listaEdosAFD = new ArrayList<>(EdosAFD);
+
+        // Ordenar la lista por el id (j)
+        Collections.sort(listaEdosAFD, Comparator.comparingInt(o -> o.j));
         NumEdosAFD = ContadorEdos;
         AFD afd = new AFD();
         afd.NumEstados = NumEdosAFD;
         afd.TablaAFD = new int[NumEdosAFD][257];
         int i1 = 0;
-        for (ConjIj cj : EdosAFD) {
+        //System.out.println("Estados AFD");
+        for (ConjIj cj : listaEdosAFD) {
             for (Estado e :  cj.ConjI) {
                 for (Estado e2 : this.EdosAcept) {
                     if (e2.equals(e)) {
-                        ConjAux.add(e2);
-                        cj.TransicionesAFD[256] = i;
-                        i = i + 10;
+                        //if (e2.getToken() == -1) {
+                            //e2.setToken(Estado.valorToken);
+                            //Estado.valorToken = Estado.valorToken + 10;
+                        //}
+                        ConjAux.add(e);
+                        cj.TransicionesAFD[256] = e2.getToken();
                     }
                 }
             }
+            //System.out.println(cj.j);
+
             afd.TablaAFD[i1] = cj.TransicionesAFD;
             i1++;
         }
 
-        afd.idAFD = 1;
+        afd.idAFD = contid++;
 
         afd.CrearArchivoTxt("archivo.txt");
         return afd;

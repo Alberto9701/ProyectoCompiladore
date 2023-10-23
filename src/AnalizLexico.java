@@ -130,7 +130,7 @@ public class AnalizLexico {
 	//unicamente para fines didacticos para mostrar en la ejecucion que parte falta por
 	//analizarse, no tiene una utilidad adicional
 	public String CadenaXAnalizar(){
-		return CadenaSigma.substring(IndiceCaracterActual, CadenaSigma.length() - IndiceCaracterActual);
+		return CadenaSigma.substring(IndiceCaracterActual, CadenaSigma.length() - (IndiceCaracterActual+1));
 	}
 
 	//
@@ -153,9 +153,16 @@ public class AnalizLexico {
 				CaracterActual = CadenaSigma.charAt(IndiceCaracterActual);
 				//uso mi tabla con el estado actual que al inicio es cero, con el caracter actual
 				//en la columna del codigo assci que le corresponde al caracter actual.
-				EdoTransicion = AutomataFD.TablaAFD[EdoActual][CaracterActual];
+				EdoTransicion = AutomataFD.TablaAFD[EdoActual][(int)CaracterActual];
+				System.out.println("el edo actual es");
+				System.out.println(EdoActual);
+				System.out.println("el caracter es");
+				System.out.println(CaracterActual);
+				System.out.println("el edo trans es ");
+				System.out.println(EdoTransicion);
 				if(EdoTransicion != -1){
 					if(AutomataFD.TablaAFD[EdoTransicion][256] != -1){// si hay un valor diferente de menos uno significa que estamos en un estado de aceptacion
+						System.out.println("paso por edo");
 						PasoPorEdoAcept = true;
 						token = AutomataFD.TablaAFD[EdoTransicion][256];
 						FinLexema = IndiceCaracterActual;
@@ -168,7 +175,7 @@ public class AnalizLexico {
 
 			}
 
-			if(!PasoPorEdoAcept){
+			if(PasoPorEdoAcept==false){
 				IndiceCaracterActual = IniLexema + 1;
 				yyText = CadenaSigma.substring(IniLexema, IniLexema+1);
 				token = SimbolosEspeciales.ERROR;
@@ -176,7 +183,7 @@ public class AnalizLexico {
 			}
 
 			//no hay transicion con el caracter actual, pero ya se habia pasado por edo de aceptacion
-			yyText = CadenaSigma.substring(IniLexema, FinLexema);
+			yyText = CadenaSigma.substring(IniLexema, FinLexema+1);
 			IndiceCaracterActual = FinLexema +1;
 			if(token == SimbolosEspeciales.OMITIR)
 				continue;
