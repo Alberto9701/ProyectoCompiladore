@@ -40,7 +40,7 @@ public class ER_AFN {
         int Token;
         AFN f2 = new AFN();
         Token = L.yylex();
-        if (Token == 10) {
+        if (Token == 10) { // OR
             if (T(f2)) {
                 f.UnirAFN(f2);
                 if (Ep(f)) {
@@ -66,7 +66,7 @@ public class ER_AFN {
         int Token;
         AFN f2 = new AFN();
         Token = L.yylex();
-        if (Token == 20) {
+        if (Token == 20) { //CONCATENACION
             if (C(f2)) {
                 f.ConcAFN(f2);
                 if (Tp(f)) {
@@ -92,20 +92,20 @@ public class ER_AFN {
         int Token;
         Token = L.yylex();
         switch (Token) {
-            case 30:
+            case 30: //CERRADURA TRANSITIVA
                 f.CerrPos();
                 if (Cp(f)) {
                     return true;
                 }
                 return false;
 
-            case 40:
+            case 40: //CERRADURA DE KLEENE
                 f.CerrKleen();
                 if (Cp(f)) {
                     return true;
                 }
                 return false;
-            case 50:
+            case 50: //CERRADURA OPC
                 f.CerrOpc();
                 if (Cp(f)) {
                     return true;
@@ -121,25 +121,25 @@ public class ER_AFN {
         char simb1, simb2;
         Token = L.yylex();
         switch (Token) {
-            case 60:
+            case 60: //PARENTESIS IZQUIERDO
                 if (E(f)) {
                     Token = L.yylex();
-                    if (Token == 70) {
+                    if (Token == 70) { //PARENTESIS DERECHO
                         return true;
                     }
                 }
                 return false;
-            case 80:
+            case 80: //CORCHETE IZQ
                 Token = L.yylex();
-                if (Token == 110) {
+                if (Token == 110) { //SIMBOLO
                     simb1 = (L.yyText.charAt(0)=='\\')?L.yyText.charAt(1): L.yyText.charAt(0);
                     Token = L.yylex();
-                    if (Token == 100) {
+                    if (Token == 100) { //GUION
                         Token = L.yylex();
-                        if (Token == 110) {
+                        if (Token == 110) { //SIMBOLO
                             simb2 = (L.yyText.charAt(0)=='\\')?L.yyText.charAt(1): L.yyText.charAt(0);
                             Token = L.yylex();
-                            if (Token == 90) {
+                            if (Token == 90) { //CORCHETE DERECHO
                                 f.CrearAFNBasico(simb1, simb2);
                                 return true;
                             }
@@ -147,7 +147,7 @@ public class ER_AFN {
                     }
                 }
                 return false;
-            case 110:
+            case 110: //SIMBOLO
                 simb1 = (L.yyText.charAt(0)=='\\')?L.yyText.charAt(1): L.yyText.charAt(0);
                 f.CrearAFNBasico(simb1);
                 return true;
