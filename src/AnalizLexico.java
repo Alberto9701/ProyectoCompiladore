@@ -154,15 +154,8 @@ public class AnalizLexico {
 				//uso mi tabla con el estado actual que al inicio es cero, con el caracter actual
 				//en la columna del codigo assci que le corresponde al caracter actual.
 				EdoTransicion = AutomataFD.TablaAFD[EdoActual][(int)CaracterActual];
-				System.out.println("el edo actual es");
-				System.out.println(EdoActual);
-				System.out.println("el caracter es");
-				System.out.println(CaracterActual);
-				System.out.println("el edo trans es ");
-				System.out.println(EdoTransicion);
 				if(EdoTransicion != -1){
 					if(AutomataFD.TablaAFD[EdoTransicion][256] != -1){// si hay un valor diferente de menos uno significa que estamos en un estado de aceptacion
-						System.out.println("paso por edo");
 						PasoPorEdoAcept = true;
 						token = AutomataFD.TablaAFD[EdoTransicion][256];
 						FinLexema = IndiceCaracterActual;

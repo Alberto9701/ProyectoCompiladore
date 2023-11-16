@@ -10,8 +10,8 @@ import java.util.List;
 public class Interfaz extends JFrame implements ActionListener {
     int cont = 0;
     private JMenuBar barramenu;
-    private JMenu menu;
-    private JMenuItem item1, item2, item3, item4, item5, item6, item7, item8, item10, item9;
+    private JMenu menu, menu2;
+    private JMenuItem item1, item2, item3, item4, item5, item6, item7, item8, item10, item9, item11;
     JPanel panel = new JPanel();
     GridBagConstraints constraints = new GridBagConstraints();
 
@@ -19,7 +19,7 @@ public class Interfaz extends JFrame implements ActionListener {
         barramenu = new JMenuBar();
         setJMenuBar(barramenu);
 
-        menu = new JMenu("Opciones");
+        menu = new JMenu("Parcial 1");
         barramenu.add(menu);
 
         item1 = new JMenuItem("Crear AFN");
@@ -61,6 +61,14 @@ public class Interfaz extends JFrame implements ActionListener {
         item10 = new JMenuItem("Operacion Opcional");
         item10.addActionListener(this);
         menu.add(item10);
+
+
+        menu2 = new JMenu("Parcial 2");
+        barramenu.add(menu2);
+
+        item11 = new JMenuItem("Verificar expresion regular");
+        item11.addActionListener(this);
+        menu2.add(item11);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -689,6 +697,108 @@ public class Interfaz extends JFrame implements ActionListener {
             // Actualizar el panel
             panel.revalidate();
             panel.repaint();
+        } if (e.getSource() == item11) {
+            panel.removeAll();
+            panel.setLayout(new GridBagLayout());
+            JLabel idAfd = new JLabel("id Asignado");
+            constraints.gridx = 1;
+            constraints.gridy = 1;
+            panel.add(idAfd,constraints);
+
+            JTextField idAsignado = new JTextField();
+            idAsignado.setPreferredSize(new Dimension(100,20));
+            constraints.gridx = 2;
+            panel.add(idAsignado, constraints);
+
+            JButton cargarArchivo = new JButton("Cargar Archivo");
+            constraints.gridx = 3;
+            //constraints.gridy = 2;
+            //cargarArchivo.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            //cargarArchivo.setBounds(20, 20, 200, 800);
+
+            panel.add(cargarArchivo,constraints);
+
+
+            //creamos un nuevo afd el cual se va a analizar
+            AFD afd1 = new AFD();
+            cargarArchivo.addActionListener(e1 -> {
+                JFileChooser fileChooser = new JFileChooser();
+                int seleccion = fileChooser.showOpenDialog(Interfaz.this);
+
+                // Verificar si se seleccionó un archivo
+                if (seleccion == JFileChooser.APPROVE_OPTION) {
+                    // Obtener el archivo seleccionado
+                    File archivo = fileChooser.getSelectedFile();
+
+                    // Hacer algo con el archivo seleccionado
+                    System.out.println("Archivo seleccionado: " + archivo.getAbsolutePath());
+
+                    try {
+                        afd1.LeerAFDdeArchivo(archivo.getName(), Integer.parseInt(idAsignado.getText()));
+                    } catch (NumberFormatException | IOException e2) {
+                        // TODO Auto-generated catch block
+                        e2.printStackTrace();
+
+                    }
+
+                }
+            });
+            JLabel sigma = new JLabel("Expresion a analizar: ");
+            constraints.gridx = 1;
+            constraints.gridy = 3;
+            panel.add(sigma,constraints);
+
+            JTextField cadenaSigma = new JTextField();
+            cadenaSigma.setPreferredSize(new Dimension(300,30));
+            constraints.gridx = 2;
+            //constraints.gridy = 3;
+            panel.add(cadenaSigma, constraints);
+
+            JButton analizarCadena = new JButton("Analizar Expresion");
+            constraints.gridx = 3;
+            //constraints.gridy = 2;
+            //cargarArchivo.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+            //cargarArchivo.setBounds(20, 20, 200, 800);
+
+            panel.add(analizarCadena,constraints);
+
+            JLabel resultado = new JLabel("Resultado: ");
+            constraints.gridx = 1;
+            constraints.gridy = 5;
+            panel.add(resultado,constraints);
+
+            JTextField result = new JTextField();
+            result.setPreferredSize(new Dimension(300,30));
+            constraints.gridx = 2;
+            //constraints.gridy = 3;
+            panel.add(result, constraints);
+
+            JLabel postfijo = new JLabel("Postfijo: ");
+            constraints.gridx = 1;
+            constraints.gridy = 7;
+            panel.add(postfijo,constraints);
+
+            JTextField post = new JTextField();
+            post.setPreferredSize(new Dimension(300,30));
+            constraints.gridx = 2;
+            //constraints.gridy = 3;
+            panel.add(post, constraints);
+
+            // vamos a analizar cadena
+            analizarCadena.addActionListener(e1 -> {
+                EvaluadorExpr Evaluador = new EvaluadorExpr(cadenaSigma.getText(), afd1);
+                if (Evaluador.IniVal()) {
+                    JOptionPane.showMessageDialog(null, "Expresión sintácticamente correcta");
+                    result.setText(String.valueOf(Evaluador.result));
+                    post.setText(Evaluador.ExprPost);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Expresión sitácticamente incorrecta");
+                }
+            });
+
+
+
+            this.add(panel);
         }
     }
 
