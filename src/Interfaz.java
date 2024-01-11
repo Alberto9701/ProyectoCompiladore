@@ -12,7 +12,7 @@ public class Interfaz extends JFrame implements ActionListener {
     int cont = 0;
     private JMenuBar barramenu;
     private JMenu menu, menu2;
-    private JMenuItem item1, item2, item3, item4, item5, item6, item7, item8, item10, item9, item11, item12;
+    private JMenuItem item1, item2, item3, item4, item5, item6, item7, item8, item10, item9, item11, item12, item13;
     JPanel panel = new JPanel();
     GridBagConstraints constraints = new GridBagConstraints();
 
@@ -74,6 +74,10 @@ public class Interfaz extends JFrame implements ActionListener {
         item12 = new JMenuItem("Crear AFN a partir de Expresion regular");
         item12.addActionListener(this);
         menu2.add(item12);
+
+        item13 = new JMenuItem("LL1");
+        item13.addActionListener(this);
+        menu2.add(item13);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -885,6 +889,60 @@ public class Interfaz extends JFrame implements ActionListener {
 
             });
             this.add(panel);
+        }
+
+        if(e.getSource() == item13){
+            panel.removeAll();
+            panel.setLayout(new GridBagLayout());
+            JLabel idAfd = new JLabel("gramatica");
+            constraints.gridx = 1;
+            constraints.gridy = 1;
+            panel.add(idAfd,constraints);
+
+            JTextField gramatica = new JTextField();
+            gramatica.setPreferredSize(new Dimension(500,300));
+            constraints.gridx = 2;
+            panel.add(gramatica, constraints);
+
+
+            JButton crearTabla = new JButton("Crear Tabla");
+            constraints.gridx = 3;
+
+            panel.add(crearTabla,constraints);
+
+            crearTabla.addActionListener(e1 -> {
+                System.out.println("presionando");
+                String gram = gramatica.getText();
+                String afdDeGram = "";
+                int identiAfd = 1;
+                DescRecGram_Gram gramDeGrams = new DescRecGram_Gram(gram, afdDeGram, identiAfd);
+                
+                //creamos modelo de la tabla
+                DefaultTableModel modelo = new DefaultTableModel();
+                modelo.addColumn("No terminal");
+
+
+
+
+
+                //tabla de no terminales
+                for (String noTerminal : gramDeGrams.Vn) {
+                    modelo.addRow(new Object[]{noTerminal});
+                }
+                // Crear tabla y asignar modelo
+                JTable tabla = new JTable(modelo);
+
+                tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                JScrollPane barra = new JScrollPane(tabla);
+                barra.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                panel.add(barra);
+                // Actualizar el panel
+                panel.revalidate();
+                panel.repaint();
+
+
+
+            });
         }
     }
 

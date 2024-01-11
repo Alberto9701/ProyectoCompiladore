@@ -142,7 +142,7 @@ public class DescRecGram_Gram {
         int token;
         Nodo N;
         token = L.yylex();
-        if (token == TokensGram_Gram.SIMBOL) {
+        if (token == TokensGram_Gram.SIMBOLO) {
             N = new Nodo(L.yyText, false);
             if (SecSimbolosP(Lista)) {
                 Lista.add(0, N);
@@ -181,7 +181,7 @@ public class DescRecGram_Gram {
     }
     public HashSet<String> First(ArrayList<Nodo> l) {
         int i, j;
-        Nodo N;
+        Nodo N; 
         HashSet<String> R = new HashSet<>();
         R.clear();
         if (l.size() == 0)
