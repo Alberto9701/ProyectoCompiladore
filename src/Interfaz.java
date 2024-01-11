@@ -6,12 +6,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Interfaz extends JFrame implements ActionListener {
     int cont = 0;
     private JMenuBar barramenu;
     private JMenu menu, menu2;
-    private JMenuItem item1, item2, item3, item4, item5, item6, item7, item8, item10, item9, item11;
+    private JMenuItem item1, item2, item3, item4, item5, item6, item7, item8, item10, item9, item11, item12;
     JPanel panel = new JPanel();
     GridBagConstraints constraints = new GridBagConstraints();
 
@@ -69,6 +70,10 @@ public class Interfaz extends JFrame implements ActionListener {
         item11 = new JMenuItem("Verificar expresion regular");
         item11.addActionListener(this);
         menu2.add(item11);
+
+        item12 = new JMenuItem("Crear AFN a partir de Expresion regular");
+        item12.addActionListener(this);
+        menu2.add(item12);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -698,6 +703,8 @@ public class Interfaz extends JFrame implements ActionListener {
             panel.revalidate();
             panel.repaint();
         } if (e.getSource() == item11) {
+            panel.revalidate();
+            panel.repaint();
             panel.removeAll();
             panel.setLayout(new GridBagLayout());
             JLabel idAfd = new JLabel("id Asignado");
@@ -798,6 +805,85 @@ public class Interfaz extends JFrame implements ActionListener {
 
 
 
+            this.add(panel);
+        }
+        if (e.getSource() == item12) {
+            panel.removeAll();
+            panel.setLayout(new GridBagLayout());
+            JLabel idAfd = new JLabel("id AFN");
+            constraints.gridx = 1;
+            constraints.gridy = 1;
+            panel.add(idAfd,constraints);
+
+            JTextField idAsignado = new JTextField();
+            idAsignado.setPreferredSize(new Dimension(100,20));
+            constraints.gridx = 2;
+            panel.add(idAsignado, constraints);
+
+            JButton cargarArchivo = new JButton("Cargar Archivo");
+            constraints.gridx = 3;
+
+            AtomicReference<String> nombredelArchivo = new AtomicReference<>("");
+            panel.add(cargarArchivo,constraints);
+            cargarArchivo.addActionListener(e1 -> {
+                JFileChooser fileChooser = new JFileChooser();
+                int seleccion = fileChooser.showOpenDialog(Interfaz.this);
+
+                // Verificar si se seleccionó un archivo
+                if (seleccion == JFileChooser.APPROVE_OPTION) {
+                    // Obtener el archivo seleccionado
+                    File archivo = fileChooser.getSelectedFile();
+                    nombredelArchivo.set(archivo.getName());
+                }
+            });
+
+            JLabel sigma = new JLabel("Expresion regular: ");
+            constraints.gridx = 1;
+            constraints.gridy = 5;
+            panel.add(sigma,constraints);
+
+            JTextField cadenaSigma = new JTextField();
+            cadenaSigma.setPreferredSize(new Dimension(300,30));
+            constraints.gridx = 2;
+            panel.add(cadenaSigma, constraints);
+
+            JLabel token = new JLabel("Token");
+            constraints.gridx = 1;
+            constraints.gridy = 7;
+            panel.add(token,constraints);
+
+            JTextField tokenAsig = new JTextField();
+            tokenAsig.setPreferredSize(new Dimension(100,20));
+            constraints.gridx = 2;
+            panel.add(tokenAsig, constraints);
+
+
+            JButton crearAFN = new JButton("Crear AFN");
+            constraints.gridx = 2;
+            constraints.gridy = 9;
+            panel.add(crearAFN,constraints);
+            crearAFN.addActionListener(e1 -> {
+                ER_AFN afn;
+                try {
+                    System.out.println(cadenaSigma.getText());
+                    System.out.println(nombredelArchivo.get());
+                    System.out.println(idAsignado.getText());
+                    afn = new ER_AFN(cadenaSigma.getText(), nombredelArchivo.get(), Integer.parseInt(idAsignado.getText()));
+                    if (afn.IniConversion()) {
+                        JOptionPane.showMessageDialog(null, "Expresión sintácticamente correcta");
+                        for (Estado estado: afn.Result.EdosAcept) {
+                            estado.setToken(Integer.parseInt(tokenAsig.getText()));
+                        }
+                        afn.Result.IdAFN = Integer.parseInt(idAsignado.getText());
+                        AFN.ConjDeAFNs.add(afn.Result);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Expresión sintácticamente incorrecta");
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+            });
             this.add(panel);
         }
     }
